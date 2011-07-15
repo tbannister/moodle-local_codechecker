@@ -24,32 +24,38 @@
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$requiredclass = 'PHP_CodeSniffer_Standards_AbstractPatternSniff';
 
-if (class_exists('PHP_CodeSniffer_Standards_AbstractPatternSniff', true) === false) {
-    $error = 'Class PHP_CodeSniffer_Standards_AbstractPatternSniff not found';
-    throw new PHP_CodeSniffer_Exception($error);
+if (class_exists($requiredclass, true) === false) {
+    throw new PHP_CodeSniffer_Exception("Class $requiredclass not found");
 }
-
 
 /**
  * Verifies that control statements conform to their coding standards.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_Sniffs_ControlStructures_ControlSignatureSniff
         extends PHP_CodeSniffer_Standards_AbstractPatternSniff {
 
+
+    /**
+     * Constructs a moodle_sniffs_controlstructures_controlsignaturesniff.
+     */
     public function __construct() {
         parent::__construct(true);
-        $this->supportedTokenizers = array('PHP', 'JS');
     }
 
-    /** @var array A list of tokenizers this sniff supports. */
 
-    protected function getPatterns() {
+    /**
+     * Returns the patterns that this test wishes to verify.
+     *
+     * @return array(string)
+     */
+    protected function getpatterns() {
         return array(
-            'try {EOL...} catch (...) {EOL',
+            'try {EOL...} catch (...) {EOL'
             'do {EOL...} while (...);EOL',
             'while (...) {EOL',
             'for (...) {EOL',
@@ -57,6 +63,6 @@ class moodle_Sniffs_ControlStructures_ControlSignatureSniff
             'foreach (...) {EOL',
             '} else if (...) {EOL',
             '} else {EOL',
-         );
+        );
     }
 }
