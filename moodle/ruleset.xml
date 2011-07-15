@@ -23,6 +23,16 @@
 
     <rule ref="Generic.WhiteSpace.ScopeIndent"/>
 
+    <!-- Lines should be less than 100 chars long -->
+    <!-- Lines should never be more than 140 (even for language strings) -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="100"/>
+            <property name="absoluteLineLimit" value="140"/>
+        </properties>
+    </rule>
+
+
     <rule ref="Squiz.Classes.DuplicateProperty"/>
     <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
     <rule ref="Squiz.Classes.SelfMemberReference"/>
