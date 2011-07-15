@@ -23,18 +23,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (class_exists('Generic_Sniffs_PHP_ForbiddenFunctionsSniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception(
-            'Class Generic_Sniffs_PHP_ForbiddenFunctionsSniff not found');
+$required_class = 'Generic_Sniffs_PHP_ForbiddenFunctionsSniff';
+
+if (class_exists($required_class, true) === false) {
+    $error = "Class $required_class not found";
+    throw new PHP_CodeSniffer_Exception($error);
 }
 
 /**
  * Discourages the use of debug functions.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Moodle_Sniffs_PHP_ForbiddenFunctionsSniff
+class moodle_Sniffs_PHP_ForbiddenFunctionsSniff
         extends Generic_Sniffs_PHP_ForbiddenFunctionsSniff {
     /** Constructor. */
     public function __construct() {

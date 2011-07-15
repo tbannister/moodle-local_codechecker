@@ -27,10 +27,16 @@
 /**
  * Verify there is a single space after a comma.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_Sniffs_WhiteSpace_SpaceAfterCommaSniff implements PHP_CodeSniffer_Sniff {
+
+    /**
+     * Create the list of tokens for which this sniff should be registered
+     *
+     * @return array The list of tokens to register the sniff for
+     */
     public function register() {
         return array(T_COMMA);
     }

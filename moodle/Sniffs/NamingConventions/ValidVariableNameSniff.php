@@ -23,8 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === false) {
-    $error = 'Class PHP_CodeSniffer_Standards_AbstractVariableSniff not found';
+$required_class = 'PHP_CodeSniffer_Standards_AbstractVariableSniff';
+
+if (class_exists($required_class, true) === false) {
+    $error = "Class $required_class not found";
     throw new PHP_CodeSniffer_Exception($error);
 }
 
@@ -81,13 +83,20 @@ class moodle_Sniffs_NamingConventions_ValidVariableNameSniff
      * @return void
      */
     protected function processVariable(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
-        $tokens = $phpcsfile->getTokens();
-        $membername     = ltrim($tokens[$stackptr]['content'], '$');
+        $tokens     = $phpcsfile->getTokens();
+        $membername = ltrim($tokens[$stackptr]['content'], '$');
+        $previous   = $tokens[($stackptr - 1)]['code'];
 
         if (preg_match('/[A-Z]+/', $membername)) {
+            // We should only warn if the variable is being referenced, rather than declared.
+            if (($previous == T_DOUBLE_COLON) || ($previous == T_OBJECT_OPERATOR)) {
+                $warning = "Object variable \"$membername\" should be all lower-case";
+                $phpcsfile->addWarning($warning, $stackptr);
+                return;
+            }
 
             if (!in_array($membername, $this->allowedglobals)) {
-                $error = "Member variable \"$membername\" must be all lower-case";
+                $error = "Variable \"$membername\" must be all lower-case";
                 $phpcsfile->addError($error, $stackptr);
                 return;
             }
@@ -103,10 +112,10 @@ class moodle_Sniffs_NamingConventions_ValidVariableNameSniff
      * @return void
      */
     protected function processVariableInString(PHP_CodeSniffer_File $phpcsfile, $stackptr) {
-        $tokens = $phpcsfile->getTokens();
+        $tokens  = $phpcsfile->getTokens();
+        $pattern = '/\$([A-Za-z0-9_]+)(\-\>([A-Za-z0-9_]+))?/i';
 
-        if (preg_match('/\$([A-Za-z0-9_]+)(\-\>([A-Za-z0-9_]+))?/i',
-                $tokens[$stackptr]['content'], $matches)) {
+        if (preg_match($pattern, $tokens[$stackptr]['content'], $matches)) {
             $firstvar = $matches[1];
             $objectvar = (empty($matches[3])) ? null : $matches[3];
             $membername = $firstvar . $objectvar;
@@ -114,14 +123,14 @@ class moodle_Sniffs_NamingConventions_ValidVariableNameSniff
             if (preg_match('/[A-Z]+/', $firstvar, $matches)) {
 
                 if (!in_array($firstvar, $this->allowedglobals)) {
-                    $error = "Member variable \"$firstvar\" must be all lower-case";
+                    $error = "Quoted variable \"$firstvar\" must be all lower-case";
                     $phpcsfile->addError($error, $stackptr);
                     return;
                 }
             }
 
             if (!empty($objectvar) && preg_match('/[A-Z]+/', $objectvar, $matches)) {
-                $error = "Member variable \"$objectvar\" must be all lower-case";
+                $error = "Quoted object \"$objectvar\" must be all lower-case";
                 $phpcsfile->addError($error, $stackptr);
                 return;
             }

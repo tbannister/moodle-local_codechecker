@@ -22,10 +22,10 @@
  * @copyright  2009 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$required_class = 'PHP_CodeSniffer_Standards_AbstractScopeSniff';
 
-if (class_exists('PHP_CodeSniffer_Standards_AbstractScopeSniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception(
-            'Class PHP_CodeSniffer_Standards_AbstractScopeSniff not found');
+if (class_exists($required_class, true) === false) {
+    throw new PHP_CodeSniffer_Exception("Class $required_class not found");
 }
 
 /**
@@ -109,20 +109,25 @@ class moodle_Sniffs_NamingConventions_ValidFunctionNameSniff
         $methodprops    = $phpcsfile->getMethodProperties($stackptr);
         $scope          = $methodprops['scope'];
         $scopespecified = $methodprops['scope_specified'];
+        $hasuppercase   = preg_match('/[A-Z]+/', $methodname);
 
         // Only lower-case accepted
-        if (preg_match('/[A-Z]+/', $methodname) &&
-                !in_array($methodname, $this->permittedmethods)) {
+        if ($hasuppercase && !in_array($methodname, $this->permittedmethods)) {
 
+              $error = 'method name "' . $classname . '::' . $methodname .
+                      '" must be in lower-case letters only';
             if ($scopespecified === true) {
-                $error = ucfirst($scope) . ' method name "' . $classname . '::' .
-                        $methodname .'" must be in lower-case letters only';
-            } else {
-                $error = 'method name "' . $classname . '::' . $methodname .
-                        '" must be in lower-case letters only';
+                $error = $scope .' '. $error;
             }
+            $error = ucfirst($error);
 
-            $phpcsfile->adderror($error, $stackptr);
+            // Modified to prevent errors when implementing abstract classes.
+            if ($baseclass = $phpcsfile->findExtendedClassName($currscope)) {
+                $warning = str_replace('must', 'should', $error);
+                $phpcsfile->addwarning($warning, $stackptr);
+            } else {
+                $phpcsfile->adderror($error, $stackptr);
+            }
             return;
         }
     }

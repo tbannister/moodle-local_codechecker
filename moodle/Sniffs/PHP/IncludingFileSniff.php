@@ -35,14 +35,30 @@
  *
  * Based on {@link PEAR_Sniffs_Files_IncludingFileSniff}.
  *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_Sniffs_PHP_IncludingFileSniff implements PHP_CodeSniffer_Sniff {
+
+
+    /**
+     * Produce the list of tokens which this sniff should be registered to.
+     *
+     * @return array The array of tokens to register this sniff for.
+     */
     public function register() {
         return array(T_INCLUDE_ONCE, T_REQUIRE_ONCE, T_REQUIRE, T_INCLUDE);
     }
 
+    /**
+     * Processes this test, when one of its tokens is encountered.
+     *
+     * @param PHP_CodeSniffer_File $file     The file being scanned.
+     * @param int                  $stackptr The position of the current token
+     *                                       in the stack passed in $tokens.
+     *
+     * @return void
+     */
     public function process(PHP_CodeSniffer_File $file, $stackptr) {
         $tokens = $file->getTokens();
 
@@ -58,7 +74,9 @@ class moodle_Sniffs_PHP_IncludingFileSniff implements PHP_CodeSniffer_Sniff {
         // of a condition. If that's the case then we need to process it as being
         // within a condition, as they are checking the return value.
         if (isset($tokens[$stackptr]['nested_parenthesis']) === true) {
+
             foreach ($tokens[$stackptr]['nested_parenthesis'] as $left => $right) {
+
                 if (isset($tokens[$left]['parenthesis_owner']) === true) {
                     $incondition = true;
                 }
@@ -70,18 +88,21 @@ class moodle_Sniffs_PHP_IncludingFileSniff implements PHP_CodeSniffer_Sniff {
         // it's conditional.
         $previous = $file->findPrevious(PHP_CodeSniffer_Tokens::$emptyTokens,
                 ($stackptr - 1), null, true);
+
         if (in_array($tokens[$previous]['code'], PHP_CodeSniffer_Tokens::$assignmentTokens)) {
             // The have assigned the return value to it, so its conditional.
             $incondition = true;
         }
 
         $tokentype = $tokens[$stackptr]['code'];
+
         if ($incondition !== true) {
             // We are unconditionally including, we should use require_once.
             if ($tokentype === T_INCLUDE_ONCE) {
                 $error  = 'File is being unconditionally included; ';
                 $error .= 'use "require_once" instead';
                 $file->addError($error, $stackptr, 'UseRequireOnce');
+
             } else if ($tokentype === T_INCLUDE) {
                 $error  = 'File is being unconditionally included; ';
                 $error .= 'use "require" instead';

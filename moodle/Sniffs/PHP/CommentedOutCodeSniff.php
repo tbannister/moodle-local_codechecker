@@ -23,29 +23,43 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
  * Sniff for detecting commented-out code.
  *
  * Based on Squiz_Sniffs_PHP_CommentedOutCodeSniff.
  *
- * @package    local
- * @subpackage codechecker
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_Sniffs_PHP_CommentedOutCodeSniff implements PHP_CodeSniffer_Sniff {
+    /** @var int If a comment is more than this much code, a warning will be shown. */
+    protected $maxpercentage = 40;
+
+    /**
+     * Constructor
+     */
     public function __construct() {
         $this->supportedTokenizers = array('PHP', 'CSS');
     }
 
-    /** @var int If a comment is more than this much code, a warning will be shown. */
-    protected $maxpercentage = 40;
-
+    /**
+     * Register this sniffs for these tokens
+     *
+     * @return array A list of the tokens this sniff should be registered to
+     */
     public function register() {
         return PHP_CodeSniffer_Tokens::$commentTokens;
     }
 
+    /**
+     * Processes this test, when one of its tokens is encountered.
+     *
+     * @param PHP_CodeSniffer_File $file     The file being scanned.
+     * @param int                  $stackptr The position of the current token
+     *                                       in the stack passed in $tokens.
+     *
+     * @return void
+     */
     public function process(PHP_CodeSniffer_File $file, $stackptr) {
         $tokens = $file->getTokens();
 
@@ -60,11 +74,13 @@ class moodle_Sniffs_PHP_CommentedOutCodeSniff implements PHP_CodeSniffer_Sniff {
         }
 
         $content = '';
+
         if ($file->tokenizerType === 'PHP') {
             $content = '<?php ';
         }
 
         for ($i = $stackptr; $i < $file->numTokens; $i++) {
+
             if ($tokens[$stackptr]['code'] !== $tokens[$i]['code']) {
                 break;
             }
@@ -145,8 +161,7 @@ class moodle_Sniffs_PHP_CommentedOutCodeSniff implements PHP_CodeSniffer_Sniff {
 
         // Second last token is always whitespace or a comment, depending
         // on the code inside the comment.
-        if (in_array($stringtokens[($numtokens - 2)]['code'],
-                PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
+        if (in_array($stringtokens[($numtokens - 2)]['code'], PHP_CodeSniffer_Tokens::$emptyTokens) === false) {
             return;
         }
 
@@ -159,6 +174,7 @@ class moodle_Sniffs_PHP_CommentedOutCodeSniff implements PHP_CodeSniffer_Sniff {
         $numcode    = 0;
 
         for ($i = 0; $i < $numtokens; $i++) {
+
             if (in_array($stringtokens[$i]['code'], $emptytokens) === true) {
                 // Looks like comment.
                 $numcomment++;
@@ -180,6 +196,7 @@ class moodle_Sniffs_PHP_CommentedOutCodeSniff implements PHP_CodeSniffer_Sniff {
         }
 
         $percentcode = ceil((($numcode / $numtokens) * 100));
+
         if ($percentcode > $this->maxpercentage) {
             // Just in case.
             $percentcode = min(100, $percentcode);

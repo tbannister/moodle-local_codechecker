@@ -24,10 +24,10 @@
  * @license    http://matrix.squiz.net/developer/tools/php_cs/licence BSD Licence
  */
 
+$requiredclass = 'PHP_CodeSniffer_Standards_AbstractVariableSniff';
 
-if (class_exists('PHP_CodeSniffer_Standards_AbstractVariableSniff', true) === false) {
-    throw new PHP_CodeSniffer_Exception(
-            'Class PHP_CodeSniffer_Standards_AbstractVariableSniff not found');
+if (class_exists($requiredclass, true) === false) {
+    throw new PHP_CodeSniffer_Exception("Class $requiredclass not found");
 }
 
 /**
@@ -50,8 +50,8 @@ class moodle_Sniffs_PHP_MemberVarScopeSniff
     /**
      * Processes the function tokens within the class.
      *
-     * @param PHP_CodeSniffer_File $file The file where this token was found.
-     * @param int                  $stackptr  The position where the token was found.
+     * @param PHP_CodeSniffer_File $file     The file where this token was found.
+     * @param int                  $stackptr The position where the token was found.
      *
      * @return void
      */
@@ -71,8 +71,8 @@ class moodle_Sniffs_PHP_MemberVarScopeSniff
     /**
      * Processes normal variables.
      *
-     * @param PHP_CodeSniffer_File $file The file where this token was found.
-     * @param int                  $stackptr  The position where the token was found.
+     * @param PHP_CodeSniffer_File $file     The file where this token was found.
+     * @param int                  $stackptr The position where the token was found.
      *
      * @return void
      */
@@ -83,8 +83,8 @@ class moodle_Sniffs_PHP_MemberVarScopeSniff
     /**
      * Processes variables in double quoted strings.
      *
-     * @param PHP_CodeSniffer_File $file The file where this token was found.
-     * @param int                  $stackptr  The position where the token was found.
+     * @param PHP_CodeSniffer_File $file     The file where this token was found.
+     * @param int                  $stackptr The position where the token was found.
      *
      * @return void
      */
