@@ -55,14 +55,14 @@ class moodle_Sniffs_ControlStructures_ControlSignatureSniff
      */
     protected function getpatterns() {
         return array(
-            'try {EOL...} catch (...) {EOL'
+            'try {EOL...} catch (...) {EOL',
             'do {EOL...} while (...);EOL',
             'while (...) {EOL',
             'for (...) {EOL',
             'if (...) {EOL',
             'foreach (...) {EOL',
             '} else if (...) {EOL',
-            '} else {EOL',
+            '} else {EOL'
         );
     }
 }
